@@ -28,3 +28,7 @@ CREATE TABLE model_predictions (
     PredictionResult numeric,
     PredictionDate timestamp
 );
+
+
+-- Some queries test 
+SELECT * FROM customer_data;
