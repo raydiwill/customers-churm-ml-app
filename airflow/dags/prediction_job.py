@@ -3,19 +3,18 @@ from datetime import timedelta
 import sys
 import os
 
-import requests
-
 sys.path.append('../')
 
 import pandas as pd
 import logging
-import json
 import requests
 
 from airflow.decorators import dag, task
 from airflow.utils.dates import days_ago
 
-API_URL = "http://127.0.0.1:8050/predict"
+
+API_URL = "http://host.docker.internal:8050/predict/"
+folder_path = "/opt/data/Folder C"
 
 
 @dag(
@@ -23,43 +22,61 @@ API_URL = "http://127.0.0.1:8050/predict"
     description='Take files and output predictions',
     tags=['dsp', 'prediction_job'],
     schedule=timedelta(minutes=2),
-    start_date=days_ago(n=0, hour=1)
+    start_date=days_ago(n=0, hour=1),
+    catchup=False
 )
 def prediction_job():
     @task
-    def read_csv_function():
-        # Read the CSV file
-        df = pd.read_csv("../dsp-finalproject/data/Folder C/test_file.csv")
-        df["PredictionSource"] = "scheduled"
+    def check_for_new_data(path):
+        csv_files = [file for file in os.listdir(path) if
+                     file.endswith(".csv") and
+                     not file.startswith("predicted_")]
 
-        data = df.to_dict(orient="records")
-        logging.info(f'{data}')
+        if not csv_files:
+            return None
 
-        return data
+        df_list = []
+        for file in csv_files:
+            file_path = os.path.join(folder_path, file)
+            df_list.append(pd.read_csv(file_path))
+            processed_file_path = os.path.join(folder_path,
+                                               f'predicted_{file}')
+            os.rename(file_path, processed_file_path)
+
+        merged_df = pd.concat(df_list, ignore_index=True)
+        return merged_df
 
     @task
-    def make_predictions(data):
-        """
+    def make_predictions(df):
+        prediction_data = {}
+        for _, row in df.iterrows():
+            prediction_data = {
+                "CreditScore": row["CreditScore"],
+                "Gender": row["Gender"],
+                "Age": row["Age"],
+                "Tenure": row["Tenure"],
+                "Balance": row["Balance"],
+                "NumOfProducts": row["NumOfProducts"],
+                "HasCrCard": row["HasCrCard"],
+                "IsActiveMember": row["IsActiveMember"],
+                "EstimatedSalary": row["EstimatedSalary"],
+                "SatisfactionScore": row["SatisfactionScore"],
+                "CardType": row["CardType"],
+                "PointEarned": row["PointEarned"],
+                "PredictionSource": "scheduled"
+            }
+
         response = requests.post(
             API_URL,
-            data=json.dumps(data),
-            headers={"Content-Type": "application/json"},
+            json=prediction_data
         )
 
         response_data = response.json()
         prediction = response_data["prediction"]
         logging.info(f'{prediction}')
-        """
-        try:
-            response = requests.get(API_URL)
-            response.raise_for_status()
 
-            print(f"API is reachable. Status code: {response.status_code}")
-        except requests.exceptions.RequestException as e:
-            print(f"Failed to reach the API. Error: {e}")
-
-    customer_data = read_csv_function()
-    make_predictions(customer_data)
+    df_to_predict = check_for_new_data(folder_path)
+    make_predictions(df_to_predict)
 
 
 scheduled_job_dag = prediction_job()
