@@ -1,24 +1,23 @@
+from datetime import timedelta
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from airflow.decorators import dag, task
+from airflow.utils.dates import days_ago
+from email.mime.text import MIMEText
 import datetime
 import random
-from datetime import timedelta
 import glob
-import sys
 import os
 import pandas as pd
 import shutil
 import great_expectations as gx
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
-sys.path.append('../')
-
 import logging
-from api.models import *
-from airflow.decorators import dag, task
-from airflow.utils.dates import days_ago
 import smtplib
-from email.mime.text import MIMEText
 
+import sys
+sys.path.append('/opt/api')
+from models import *
+from db_setup import *
 
 DB_URL = "postgresql://postgres:khanhduong@host.docker.internal:5432/mydbs"
 user_email = "duong.tranhn1102@gmail.com"
@@ -55,6 +54,7 @@ def data_ingestion():
     def read_file():
         file_pattern = os.path.join(default_folder, "*.csv")
         file_paths = glob.glob(file_pattern)
+        logging.info(f'{file_paths}')
         file_paths = [f for f in file_paths if
                       not os.path.basename(f).startswith('processed_')]
 
@@ -125,6 +125,7 @@ def data_ingestion():
         for result in validator_result["results"]:
             if not result["success"]:
                 send_email(sender, recipient, subject, message)
+                logging.info(f'Email sent!')
 
     @task
     def split_file(file, validator_result, folder_b, folder_c):
@@ -144,10 +145,14 @@ def data_ingestion():
             df_problems = df.loc[problem_rows]
             df_no_problems = df.drop(problem_rows)
 
-            problems_file_path = os.path.join(folder_b,
-                                              f"file_with_problems_{timestamp}_{os.path.basename(file)}")
-            no_problems_file_path = os.path.join(folder_c,
-                                                 f"file_without_problems_{os.path.basename(file)}")
+            problems_file_path = (
+                os.path.join(folder_b,
+                             f"file_with_problems_"
+                             f"{timestamp}_{os.path.basename(file)}"))
+            no_problems_file_path = (
+                os.path.join(folder_c,
+                             f"file_without_problems_"
+                             f"{os.path.basename(file)}"))
 
             df_problems.to_csv(problems_file_path, index=False)
             df_no_problems.to_csv(no_problems_file_path, index=False)
@@ -159,13 +164,17 @@ def data_ingestion():
         Session = sessionmaker(bind=engine)
         session = Session()
 
-        file_name = os.path.basename(validator_result["meta"]["batch_spec"]["reader_options"]["filepath_or_buffer"])
+        file_name = (
+            os.path.basename(validator_result
+                             ["meta"]["batch_spec"]
+                             ["reader_options"]["filepath_or_buffer"]))
         for result in validator_result["results"]:
             if not result["success"]:
                 column = result["expectation_config"]["kwargs"]["column"]
                 expectation_type = result["expectation_config"][
                     "expectation_type"]
-                unexpected_values = str(result["result"]["partial_unexpected_list"])
+                unexpected_values = (
+                    str(result["result"]["partial_unexpected_list"]))
 
                 stat = ProblemStats(
                     file_name=file_name,

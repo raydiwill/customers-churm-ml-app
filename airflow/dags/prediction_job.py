@@ -1,17 +1,10 @@
-from datetime import datetime
 from datetime import timedelta
-import sys
-import os
-
-sys.path.append('../')
-
+from airflow.decorators import dag, task
+from airflow.utils.dates import days_ago
 import pandas as pd
 import logging
 import requests
-
-from airflow.decorators import dag, task
-from airflow.utils.dates import days_ago
-
+import os
 
 API_URL = "http://host.docker.internal:8050/predict/"
 folder_path = "/opt/data/Folder C"
