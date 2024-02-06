@@ -58,6 +58,13 @@ Embark on a journey through the core components of our project:
 
 ![](images/dashboard.png)
 
+## Tasks Accomplished as Data Scientist:
+- Conducted comprehensive Exploratory Data Analysis (EDA) to unveil valuable insights from the dataset.
+- Collected, cleaned, and prepared data for model training, ensuring data integrity and reliability.
+- Trained and evaluated multiple machine learning models, including Logistic Regression, Random Forest, Gradient Boosting, and XGBoost.
+- Utilized metrics such as confusion matrix, ROC curve, and AUC to assess model performance and iteratively refine the models.
+- Integrated the machine learning model into the web application's backend using FastAPI, ensuring seamless functionality and real-time predictions.
+
 ## Installation and Setup
 
 1. **Initial Installation:**
@@ -106,4 +113,10 @@ For the webapp, go to localhost:8501.
 - Go to localhost:8080.
 - Retrieve the Airflow admin password from the standalone_admin_password file, and use the username *admin*.
 
+## To-Do:
 
+- [ ] Track models using MLflow.
+- [ ] Experiments with resampling.
+- [ ] Experiments with class weights in models. 
+- [ ] Compare features selection with all features.
+- [ ] Show features importance.
