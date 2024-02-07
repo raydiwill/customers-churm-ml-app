@@ -116,7 +116,5 @@ For the webapp, go to localhost:8501.
 ## To-Do:
 
 - [ ] Track models using MLflow.
-- [ ] Experiments with resampling.
-- [ ] Experiments with class weights in models. 
 - [ ] Compare features selection with all features.
 - [ ] Show features importance.
