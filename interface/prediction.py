@@ -4,7 +4,12 @@ import pandas as pd
 
 
 # Create the prediction page
-def prediction_page(api_url):
+def prediction_page(api_url: str) -> None:
+    """ Create the prediction page for the Streamlit app.
+
+    Argument:
+    api_url: URL for the prediction API
+    """
     st.subheader("Bank Customer Churn Prediction")
 
     prediction_mode = st.radio("Select Prediction Mode",

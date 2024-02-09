@@ -4,7 +4,12 @@ import datetime
 
 
 # Create the past predictions page
-def past_predictions_page(api_url):
+def past_predictions_page(api_url: str) -> None:
+    """ Create the past predictions page for the Streamlit app.
+
+    Argument:
+    api_url: URL for the past predictions API
+    """
     st.subheader("View Past Predictions")
     start_date = st.date_input("Start Date")
     today = datetime.date.today()
