@@ -117,4 +117,3 @@ For the webapp, go to localhost:8501.
 
 - [ ] Track models using MLflow.
 - [ ] Compare features selection with all features.
-- [ ] Show features importance.
