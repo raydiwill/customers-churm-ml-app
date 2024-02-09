@@ -14,7 +14,7 @@ def load_data(file: str) -> pd.DataFrame:
     return df
 
 
-def get_prediction(api_url: str, data: dict) -> int:
+def get_prediction(api_url: str, data: List[dict]) -> int:
     """ Return the prediction from the API.
 
     Arguments:
@@ -24,7 +24,7 @@ def get_prediction(api_url: str, data: dict) -> int:
     response = requests.post(api_url, json=data)
     prediction = response.json()
     prediction_value = prediction['prediction'][0]
-    return prediction_value
+    return prediction_value["PredictionResult"]
 
 
 def display_prediction(data: dict, prediction: List[int]) -> None:
