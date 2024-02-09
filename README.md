@@ -79,9 +79,9 @@ pip install -r requirements.txt
 3. **Build Docker image and start services:**
 
 ```commandline
-cd airflow
-docker build -f Dockerfile -t {name_of_the_image}:latest . 
-docker-compose -f "docker-compose.yml" up -d --build
+# Root directory
+docker build -f airflow/Dockerfile -t {name_of_the_image}:latest . 
+docker-compose -f "airflow/docker-compose.yml" up -d --build
 ```
 
 ### Running Steps:

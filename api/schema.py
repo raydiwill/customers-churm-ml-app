@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 
 class CustomerData(BaseModel):
@@ -21,16 +22,16 @@ class CustomerData(BaseModel):
     PointEarned: The number of points the customer has earned.
     PredictionSource: The source of the prediction data.
     """
-    CreditScore: int
-    Gender: str
-    Age: int
-    Tenure: int
-    Balance: float
-    NumOfProducts: int
-    HasCrCard: int
-    IsActiveMember: int
-    EstimatedSalary: float
-    SatisfactionScore: int
-    CardType: str
-    PointEarned: int
-    PredictionSource: str
+    CreditScore: Optional[int] = None
+    Gender: Optional[str] = None
+    Age: Optional[int] = None
+    Tenure: Optional[int] = None
+    Balance: Optional[float] = None
+    NumOfProducts: Optional[int] = None
+    HasCrCard: Optional[int] = None
+    IsActiveMember: Optional[int] = None
+    EstimatedSalary: Optional[float] = None
+    SatisfactionScore: Optional[int] = None
+    CardType: Optional[str] = None
+    PointEarned: Optional[int] = None
+    PredictionSource: Optional[str] = None
