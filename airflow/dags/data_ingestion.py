@@ -18,6 +18,7 @@ import sys
 sys.path.append('/opt/api')
 from models import *
 from db_setup import *
+from config import *
 
 DB_URL = "postgresql://postgres:khanhduong@host.docker.internal:5432/mydbs"
 user_email = "duong.tranhn1102@gmail.com"
@@ -79,8 +80,14 @@ def data_ingestion():
             "Gender", ["Male", "Female"],
             result_format={'result_format': 'SUMMARY'}
         )
+
         validator.expect_column_values_to_be_between(
             "Age", min_value=0, max_value=120,
+            result_format={'result_format': 'SUMMARY'}
+        )
+
+        validator.expect_column_values_to_be_between(
+            "Tenure", min_value=0,
             result_format={'result_format': 'SUMMARY'}
         )
 
@@ -88,6 +95,7 @@ def data_ingestion():
             "CreditScore", min_value=0,
             result_format={'result_format': 'SUMMARY'}
         )
+
         validator.expect_column_values_to_be_between(
             "Balance", min_value=0, result_format={'result_format': 'SUMMARY'}
         )
@@ -107,8 +115,19 @@ def data_ingestion():
         validator.expect_column_values_to_be_in_set(
             "HasCrCard", [0, 1], result_format={'result_format': 'SUMMARY'}
         )
+
         validator.expect_column_values_to_be_in_set(
             "IsActiveMember", [0, 1],
+            result_format={'result_format': 'SUMMARY'}
+        )
+
+        validator.expect_column_values_to_be_of_type(
+            "EstimatedSalary", "float64",
+            result_format={'result_format': 'SUMMARY'}
+        )
+
+        validator.expect_column_values_to_be_between(
+            "PointEarned", min_value=0,
             result_format={'result_format': 'SUMMARY'}
         )
 
