@@ -23,9 +23,7 @@ class Customer(Base):
 
     Attributes:
     CustomerId: Primary key, unique identifier for the customer.
-    Surname: Customer's surname.
     CreditScore: Customer's credit score.
-    Geography: Customer's geographical location.
     Gender: Customer's gender.
     Age: Customer's age.
     Tenure: Number of years the customer has been with the bank.
@@ -43,10 +41,8 @@ class Customer(Base):
     """
     __tablename__ = 'customer_data'
 
-    CustomerId = Column(Integer, primary_key=True)
-    Surname = Column(String)
+    CustomerId = Column(Integer, autoincrement=True, primary_key=True)
     CreditScore = Column(Integer)
-    Geography = Column(String)
     Gender = Column(String)
     Age = Column(Integer)
     Tenure = Column(Integer)

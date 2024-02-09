@@ -1,12 +1,14 @@
 from datetime import datetime
+from typing import List
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import and_
 from db_setup import *
-from models import *
-from schema import *
+from models import Base, Customer
+from schema import CustomerData
 import pandas as pd
 import joblib
+import uvicorn
 
 
 def create_tables():
@@ -32,28 +34,34 @@ model = joblib.load('../notebook/boosting_model.joblib')
 
 
 @app.post("/predict/")
-async def predict(data: CustomerData, db: SessionLocal = Depends(get_db)):
-    customer = Customer(**data.dict())
+async def predict(data: List[CustomerData],
+                  db: SessionLocal = Depends(get_db)):
+    # Convert the list of Pydantic models to a list of dictionaries
+    data_dicts = [item.dict() for item in data]
 
-    # Convert Pydantic model to DataFrame
-    input_data = pd.DataFrame([data.dict()])
+    # Create a DataFrame from the list of dictionaries
+    input_data = pd.DataFrame(data_dicts)
     input_data.drop(
         columns=["PredictionSource"], inplace=True, errors="ignore")
 
     # Perform prediction
-    prediction_result = model.predict(input_data)
-    for i in prediction_result.tolist():
-        customer.PredictionResult = i
+    prediction_results = model.predict(input_data)
 
-    db.add(customer)
+    results = []
+    for idx, prediction in enumerate(prediction_results):
+        customer_data = data_dicts[idx]
+        customer_data.update({"PredictionResult": int(prediction)})
+        # Create and add CustomerModel instance to database
+        customer = Customer(**customer_data)
+        db.add(customer)
+        results.append(customer_data)
+
     db.commit()
-
-    return {"prediction": prediction_result.tolist()}
+    return {"prediction": results}
 
 
 @app.get('/past-predictions/')
 def get_predict(dates: dict, db: SessionLocal = Depends(get_db)):
-
     start_date = dates["start_date"]
     start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
     end_date = dates["end_date"]
@@ -85,5 +93,4 @@ def get_predict(dates: dict, db: SessionLocal = Depends(get_db)):
 
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8050)
+    uvicorn.run("main:app", host="127.0.0.1", port=8050, reload=True)
