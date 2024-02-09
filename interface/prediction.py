@@ -52,6 +52,7 @@ def prediction_page(api_url: str) -> None:
             "Points Earned", help=
             "Enter the number of points you have earned", step=1))
 
+        single_pred = []
         # Predict button for single sample prediction
         if st.button("Predict Single Sample"):
             user_data = {
@@ -69,7 +70,8 @@ def prediction_page(api_url: str) -> None:
                 "PointEarned": point_earned,
                 "PredictionSource": "webpage"
             }
-            prediction_result = get_prediction(api_url, user_data)
+            single_pred.append(user_data)
+            prediction_result = get_prediction(api_url, single_pred)
 
             # Display the prediction result for the single sample
             display_prediction(user_data, [prediction_result])
@@ -87,7 +89,7 @@ def prediction_page(api_url: str) -> None:
 
             # Make predictions for each row in the uploaded CSV
             predictions = []
-
+            multiple_preds = []
             for index, row in uploaded_data.iterrows():
                 prediction_data = {
                     "CreditScore": row["CreditScore"],
@@ -104,8 +106,8 @@ def prediction_page(api_url: str) -> None:
                     "PointEarned": row["PointEarned"],
                     "PredictionSource": "webpage"
                 }
-
-                prediction_result = get_prediction(api_url, prediction_data)
+                multiple_preds.append(prediction_data)
+                prediction_result = get_prediction(api_url, multiple_preds)
                 predictions.append(prediction_result)
 
             # Display the predictions for the uploaded CSV file
