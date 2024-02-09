@@ -10,7 +10,6 @@ import glob
 import os
 import pandas as pd
 import shutil
-import great_expectations as gx
 import logging
 
 import sys
@@ -53,125 +52,8 @@ def data_ingestion():
 
     @task
     def validate_data(file):
-        context = gx.get_context()
-        validator = context.sources.pandas_default.read_csv(file)
-
-        validator.expect_column_values_to_be_in_set(
-            "Gender", ["Male", "Female"],
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_of_type(
-            "Age", "int64",
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_between(
-            "Age", min_value=0, max_value=120,
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_of_type(
-            "Tenure", "int64",
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_between(
-            "Tenure", min_value=0,
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_of_type(
-            "CreditScore", "int64",
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_between(
-            "CreditScore", min_value=0,
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_of_type(
-            "Balance", "float64",
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_between(
-            "Balance", min_value=0.0,
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_of_type(
-            "NumOfProducts", "int64",
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_between(
-            "NumOfProducts", min_value=1, max_value=5,
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_of_type(
-            "CardType", "object",
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_in_set(
-            "CardType", ["SILVER", "GOLD", "PLATINUM", "DIAMOND"],
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_of_type(
-            "SatisfactionScore", "int64",
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_in_set(
-            "SatisfactionScore", [1, 2, 3, 4, 5],
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_of_type(
-            "HasCrCard", "int64",
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_in_set(
-            "HasCrCard", [0, 1], result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_of_type(
-            "IsActiveMember", "int64",
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_in_set(
-            "IsActiveMember", [0, 1],
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_of_type(
-            "EstimatedSalary", "float64",
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_between(
-            "EstimatedSalary", min_value=0.0,
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_of_type(
-            "PointEarned", "int64",
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator.expect_column_values_to_be_between(
-            "PointEarned", min_value=0,
-            result_format={'result_format': 'SUMMARY'}
-        )
-
-        validator_result = validator.validate()
-        return {"file": file, "validator_result": validator_result}
+        validation_outputs = gx_validation(file)
+        return validation_outputs
 
     @task
     def raise_alert(validator_output):
