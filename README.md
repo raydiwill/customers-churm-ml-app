@@ -100,8 +100,8 @@ docker-compose -f "airflow/docker-compose.yml" up -d --build
 
 6. **Modify settings:**
 
-* myenv.env:
-* dag utils file:
+* myenv.env 
+* dag utils file
 
 ### Running Steps:
 1. **Run the FastAPI main.py file for the API:**
