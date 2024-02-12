@@ -80,9 +80,13 @@ Install project dependencies:
 pip install -r requirements.txt
 ```
 
-2. **Install Docker and Docker Compose** (Docker Desktop is additional)
+1. **Install Docker and Docker Compose** 
 
-3. **Install Postgres database**
+The easiest way is to install [Docker Desktop](https://www.docker.com/products/docker-desktop/) as they included both 
+
+3. **Install [Postgres](https://www.postgresql.org/download/) database**
+
+After successful installation, we need the username and password to connect with the API.
 
 4. **Build Docker image and start services:**
 
@@ -92,7 +96,12 @@ docker build -f airflow/Dockerfile -t {name_of_the_image}:latest .
 docker-compose -f "airflow/docker-compose.yml" up -d --build
 ```
 
-5. **Create the data, retrieve the password for user "postgres"
+5. **Create the database**
+
+6. **Modify settings:**
+
+* myenv.env:
+* dag utils file:
 
 ### Running Steps:
 1. **Run the FastAPI main.py file for the API:**
@@ -126,4 +135,3 @@ For the webapp, go to localhost:8501.
 ## To-Do:
 
 - [ ] Track models using MLflow.
-- [ ] Compare features selection with all features.
