@@ -65,6 +65,12 @@ Embark on a journey through the core components of our project:
 - Utilized metrics such as confusion matrix, ROC curve, and AUC to assess model performance and iteratively refine the models.
 - Integrated the machine learning model into the web application's backend using FastAPI, ensuring seamless functionality and real-time predictions.
 
+## Prerequisites
+
+- Python (>=3.8)
+- Docker
+- Docker Compose
+
 ## Installation and Setup
 
 1. **Initial Installation:**
@@ -76,13 +82,17 @@ pip install -r requirements.txt
 
 2. **Install Docker and Docker Compose** (Docker Desktop is additional)
 
-3. **Build Docker image and start services:**
+3. **Install Postgres database**
+
+4. **Build Docker image and start services:**
 
 ```commandline
 # Root directory
 docker build -f airflow/Dockerfile -t {name_of_the_image}:latest . 
 docker-compose -f "airflow/docker-compose.yml" up -d --build
 ```
+
+5. **Create the data, retrieve the password for user "postgres"
 
 ### Running Steps:
 1. **Run the FastAPI main.py file for the API:**
