@@ -18,3 +18,4 @@ python-multipart
 requests
 great-expectations
 Unidecode
+optuna==3.5.0
